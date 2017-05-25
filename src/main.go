@@ -52,5 +52,12 @@ func main() {
 
 	user.InputPasswd()
 
-	fmt.Println("GO")
+	fmt.Println("正在处理...")
+
+	// id := user.GetPasswd()
+
+	ServerInfo := netMgr.GetServer()
+	// url := _server.clientServer + "?id" + id + "?target" + server.targetServer
+
+	netMgr.Client("127.0.0.1")
 }

@@ -2,6 +2,8 @@ package user
 
 import (
 	"bufio"
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"os"
 )
@@ -14,9 +16,22 @@ func InputPasswd() {
 
 	for scanner.Scan() {
 		passwd = scanner.Text()
+
+		passwdEncrypt()
+		return
 	}
 }
 
 func GetPasswd() string {
 	return passwd
+}
+
+func passwdEncrypt() {
+	c := md5.New()
+
+	c.Write([]byte(passwd))
+
+	passwdHexed := c.Sum(nil)
+
+	passwd = hex.EncodeToString(passwdHexed)
 }

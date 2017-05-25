@@ -7,17 +7,21 @@ import (
 
 var URL_STATUS = false
 
-var ClientServer = ""
-var TargetServer = ""
+type SERVERINFO struct {
+	clientServer string
+	targetServer string
+}
+
+var ServerInfo SERVERINFO
 
 func GetUrl(url string) bool {
 
-	if ClientServer == "" {
-		ClientServer = url
+	if ServerInfo.clientServer == "" {
+		ServerInfo.clientServer = url
 
 		return URL_STATUS
 	}
-	TargetServer = url
+	ServerInfo.targetServer = url
 
 	URL_STATUS = true
 
@@ -25,10 +29,15 @@ func GetUrl(url string) bool {
 }
 
 func CheckURL() bool {
-	return ClientServer != "" && TargetServer != ""
+	return ServerInfo.clientServer != "" && ServerInfo.targetServer != ""
+}
+
+func GetServer() SERVERINFO {
+	return ServerInfo
 }
 
 func Client(path string) *http.Response {
+	fmt.Println(path)
 	res, err := http.Get(path)
 
 	if err != nil {
