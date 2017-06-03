@@ -3,25 +3,30 @@ package netMgr
 import (
 	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
 var URL_STATUS = false
 
 type SERVERINFO struct {
-	clientServer string
-	targetServer string
+	ClientServer string
+	TargetServer string
 }
 
 var ServerInfo SERVERINFO
 
 func GetUrl(url string) bool {
 
-	if ServerInfo.clientServer == "" {
-		ServerInfo.clientServer = url
+	url = strings.TrimSpace(url)
+
+	if ServerInfo.ClientServer == "" {
+		ServerInfo.ClientServer = url
 
 		return URL_STATUS
 	}
-	ServerInfo.targetServer = url
+
+	ServerInfo.TargetServer = url
 
 	URL_STATUS = true
 
@@ -29,7 +34,7 @@ func GetUrl(url string) bool {
 }
 
 func CheckURL() bool {
-	return ServerInfo.clientServer != "" && ServerInfo.targetServer != ""
+	return ServerInfo.ClientServer != "" && ServerInfo.TargetServer != ""
 }
 
 func GetServer() SERVERINFO {
@@ -37,12 +42,19 @@ func GetServer() SERVERINFO {
 }
 
 func Client(path string) *http.Response {
-	fmt.Println(path)
-	res, err := http.Get(path)
+
+	values := url.Values{}
+
+	values.Set("a", ServerInfo.ClientServer)
+	values.Set("b", ServerInfo.TargetServer)
+
+	fmt.Println("正在处理...")
+
+	res, err := http.PostForm(path, values)
 
 	if err != nil {
-		fmt.Println("网络错误：", err)
+		fmt.Println("网络错误： 请检查IP")
 	}
-
 	return res
+
 }

@@ -6,17 +6,24 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 )
 
 const CONFIG_PATH = "./config.txt"
 const ERROR_CONFIGERROR = "配置文件格式不正确"
+const ERROR_NOCONFIG = "未找到配置文件文件"
+const ERROR_NET = "网络发生问题，请联系管理员查看"
+const INFO_DONE = "转移完成"
+const URL_PATH = "/sendAll"
+const PORT = ":9090"
+const HTTPHEAD = "http://"
 
 func init() {
 	file, err := os.Open(CONFIG_PATH)
 
 	if err != nil {
-		fmt.Println("未找到配置文件文件")
+		fmt.Println(ERROR_NOCONFIG)
 	}
 
 	defer file.Close()
@@ -50,14 +57,25 @@ func main() {
 		return
 	}
 
-	user.InputPasswd()
+	result := user.Correct()
 
-	fmt.Println("正在处理...")
-
-	// id := user.GetPasswd()
+	if !result {
+		return
+	}
 
 	ServerInfo := netMgr.GetServer()
-	// url := _server.clientServer + "?id" + id + "?target" + server.targetServer
 
-	netMgr.Client("127.0.0.1")
+	res := netMgr.Client(HTTPHEAD + ServerInfo.ClientServer + PORT + URL_PATH)
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		fmt.Println(ERROR_NET)
+		return
+	}
+
+	fmt.Println(string(body))
+
+	defer res.Body.Close()
+	return
 }

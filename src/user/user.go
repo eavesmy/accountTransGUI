@@ -2,36 +2,25 @@ package user
 
 import (
 	"bufio"
-	"crypto/md5"
-	"encoding/hex"
 	"fmt"
 	"os"
 )
 
-var passwd = ""
-
-func InputPasswd() {
-	fmt.Print("请输入密码：")
+func Correct() bool {
+	fmt.Print("确定要转移吗？(y/n) ")
 	scanner := bufio.NewScanner(os.Stdin)
 
+	_b := true
+
 	for scanner.Scan() {
-		passwd = scanner.Text()
+		result := scanner.Text()
 
-		passwdEncrypt()
-		return
+		if result != "y" {
+			_b = false
+		}
+
+		return _b
 	}
-}
 
-func GetPasswd() string {
-	return passwd
-}
-
-func passwdEncrypt() {
-	c := md5.New()
-
-	c.Write([]byte(passwd))
-
-	passwdHexed := c.Sum(nil)
-
-	passwd = hex.EncodeToString(passwdHexed)
+	return _b
 }
